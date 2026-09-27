@@ -28,4 +28,21 @@ def resolve_name(
     cannot be resolved under the requested mode.
     """
     # TODO
-    raise NotImplementedError
+    if mode == "static":
+        try:
+            return current_env.resolve(name)
+        except SemanticError:
+            raise SemanticError(f"Variable '{name}' is undefined using static scoping")
+    elif mode == "dynamic":
+         for cs in reversed(call_stack):
+            try:
+                return cs.resolve(name)
+            except SemanticError:   # variable undefined in this scope, check the next
+                pass
+         if isinstance(current_env.parent, Environment):     # global scope
+            try:
+                return current_env.parent.resolve(name)
+            except SemanticError:
+                raise SemanticError(f"Variable '{name}' is undefined using dynamic scoping")
+    else:
+        raise ValueError(f"{mode} is not a valid scope mode.")
