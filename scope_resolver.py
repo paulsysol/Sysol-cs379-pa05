@@ -39,9 +39,9 @@ def resolve_name(
                 return cs.resolve(name)
             except SemanticError:   # variable undefined in this scope, check the next
                 pass
-         if isinstance(current_env.parent, Environment):     # global scope
+         if isinstance(current_env, Environment):     # global scope
             try:
-                return current_env.parent.resolve(name)
+                return current_env.resolve(name)
             except SemanticError:
                 raise SemanticError(f"Variable '{name}' is undefined using dynamic scoping")
     else:
